@@ -4,7 +4,7 @@ import { AiOutlineShoppingCart } from "react-icons/ai"
 const Layout = () => {
   return (
     <>
-      <nav className="absolute top-0 left-0 right-0 bg-gray-600 py-5 px-5 flex justify-between">
+      <nav className="fixed z-50 top-0 left-0 right-0 bg-gray-600 py-5 px-5 flex justify-between">
         <Link to="/" className="text-white">
           Acme
         </Link>
@@ -12,7 +12,7 @@ const Layout = () => {
           <AiOutlineShoppingCart />
         </Link>
       </nav>
-      <main className="mt-16">
+      <main className="mt-16 container mx-auto">
         <Outlet />
       </main>
     </>
