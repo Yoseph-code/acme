@@ -1,21 +1,20 @@
 import { observer } from "mobx-react-lite"
 import { useEffect, useState } from "react"
 import useStores from "../hooks/useStores"
-import { AiFillHeart, AiOutlineShoppingCart } from "react-icons/ai"
 import { Product } from "../stores/ProductStore"
 
-const Products = observer(() => {
-  const { productStore, cartStore } = useStores()
-  const [products, setProducts] = useState([])
+const Cart = observer(() => {
+  const { cartStore } = useStores()
+  const [products, setProducts] = useState<Product[]>([])
 
   useEffect(() => {
     getProducts()
   }, [])
 
-  const getProducts = async () => {
-    const result = await productStore.getProducts()
+  const getProducts = () => {
+    const result = cartStore.getCartProducts()
 
-    setProducts(result as any)
+    setProducts(result)
   }
 
   return (
@@ -37,16 +36,23 @@ const Products = observer(() => {
                 <p>
                   Preço: {String(Number(item.price).toFixed(2))}
                 </p>
-                <div className="gap-5 flex">
-                  <button>
-                    <AiFillHeart />
-                  </button>
-                  <button
-                    onClick={() => cartStore.addToCart(item)}
-                  >
-                    <AiOutlineShoppingCart />
-                  </button>
-                </div>
+                <div />
+              </div>
+              <div className="w-full justify-between gap-2 flex px-2 py-2">
+                <button
+                  className="bg-green-500 w-full py-2 rounded-md"
+                >
+                  comprar
+                </button>
+                <button
+                  className="bg-red-500 w-full py-2 rounded-md"
+                  onClick={()=> {
+                    cartStore.deleteProduct(item)
+                    getProducts()
+                  }}
+                >
+                  deletar
+                </button>
               </div>
             </div>
           ))
@@ -56,4 +62,4 @@ const Products = observer(() => {
   )
 })
 
-export default Products
+export default Cart

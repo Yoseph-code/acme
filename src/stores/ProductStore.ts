@@ -2,6 +2,18 @@ import { makeAutoObservable } from "mobx";
 import api from "../api";
 import { RootStore } from "./RootStore";
 
+export type Product = {
+  author: string
+  download_url: string
+  height: number
+  width: number
+  url: string
+  id: string | number
+  name: string
+  description: string
+  price: number
+}
+
 export class ProductStore {
   private verbs = ["Armário", "Navio", "Mala", "Base", "Hidroavião", "Revista", "Carretel", "Minissaia", "Tamborim",
     "Andador", "Geladeira", "Estátua", "Rolo", "Crachá", "Peneira", "Bafômetro", "Desentupidor",
@@ -31,7 +43,7 @@ export class ProductStore {
   async getProducts() {
     const { data } = await api.get("/list")
 
-    let result: any[] = []
+    let result: Product[] = []
 
     for (let i = 0; i < data.length; i++) {
       const verb = this.verbs[this.randomNum(0, this.verbs.length)]

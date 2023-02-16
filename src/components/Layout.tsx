@@ -8,11 +8,11 @@ const Layout = () => {
         <Link to="/" className="text-white">
           Acme
         </Link>
-        <Link to="/" className="text-white text-2xl">
+        <Link to="/cart" className="text-white text-2xl">
           <AiOutlineShoppingCart />
         </Link>
       </nav>
-      <main className="mt-16 container mx-auto">
+      <main className="mt-20 container mx-auto">
         <Outlet />
       </main>
     </>
