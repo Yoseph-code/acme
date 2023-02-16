@@ -8,7 +8,7 @@ export type Product = {
   height: number
   width: number
   url: string
-  id: string | number
+  id: string
   name: string
   description: string
   price: number
@@ -40,27 +40,49 @@ export class ProductStore {
     return Math.floor(Math.random() * (max - min) + min)
   }
 
-  async getProducts() {
-    const { data } = await api.get("/list")
+  getLocalStore(type: "products"): Product[] {
+    const result = window.localStorage.getItem(type)
 
-    let result: Product[] = []
-
-    for (let i = 0; i < data.length; i++) {
-      const verb = this.verbs[this.randomNum(0, this.verbs.length)]
-      const adjective = this.adjectives[this.randomNum(0, this.adjectives.length)]
-
-      const name = verb + " " + adjective
-      // const description = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis perferendis iure optio quibusdam fugiat autem assumenda sint earum dolorem error, modi repellendus sit quae expedita quo. Officia animi repellendus quibusdam."
-      const description = "algum text ai improvisado"
-
-      result.push({
-        ...data[i],
-        name,
-        description,
-        price: 10 + name.length * ((500 - description.length) / (3 - name.length))
-      })
+    if (result === null) {
+      return []
     }
 
-    return result
+    return JSON.parse(result)
+  }
+
+  setLocalStore(type: "products", products: Product[]) {
+    window.localStorage.setItem(type, JSON.stringify(products))
+  }
+
+  async getProducts() {
+    const res = this.getLocalStore("products")
+
+    if (res.length === 0) {
+      const { data } = await api.get("/list")
+
+      let result: Product[] = []
+
+      for (let i = 0; i < data.length; i++) {
+        const verb = this.verbs[this.randomNum(0, this.verbs.length)]
+        const adjective = this.adjectives[this.randomNum(0, this.adjectives.length)]
+
+        const name = verb + " " + adjective
+        // const description = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis perferendis iure optio quibusdam fugiat autem assumenda sint earum dolorem error, modi repellendus sit quae expedita quo. Officia animi repellendus quibusdam."
+        const description = "algum text ai improvisado"
+
+        result.push({
+          ...data[i],
+          name,
+          description,
+          price: 10 + name.length * ((500 - description.length) / (3 - name.length))
+        })
+      }
+
+      this.setLocalStore("products", result)
+
+      return result
+    }
+
+    return res
   }
 }
