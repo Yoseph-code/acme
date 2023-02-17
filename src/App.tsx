@@ -2,6 +2,7 @@ import { useEffect } from "react"
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import Layout from "./components/Layout"
 import Cart from "./views/Cart"
+import ProductDetails from "./views/ProductDetails"
 import Products from "./views/Products"
 
 const router = createBrowserRouter([
@@ -17,12 +18,16 @@ const router = createBrowserRouter([
         path: "cart",
         element: <Cart />
       },
+      {
+        path: "product/:id",
+        element: <ProductDetails />
+      }
     ]
   }
 ])
 
 const App = () => {
-  useEffect(()=> {
+  useEffect(() => {
     window.localStorage.clear()
   }, [])
 

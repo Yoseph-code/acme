@@ -1,4 +1,5 @@
 import { makeAutoObservable } from "mobx";
+import { Product } from "./ProductStore";
 import { RootStore } from "./RootStore";
 
 export class FavoriteStore {
@@ -9,7 +10,7 @@ export class FavoriteStore {
     this.rootStore = rootStore
   }
 
-  getLocalStore(item: "favorite"): string[] {
+  getLocalStore(item: "favorite"): Product[] {
     const result = window.localStorage.getItem(item)
 
     if (result === null) {
@@ -19,33 +20,33 @@ export class FavoriteStore {
     return JSON.parse(result)
   }
 
-  setLocalStore(type: "favorite", ids: string[]) {
+  setLocalStore(type: "favorite", ids: Product[]) {
     window.localStorage.setItem(type, JSON.stringify(ids))
   }
 
-  setFavoreteItem(id: string) {
-    const favorites = this.getLocalStore("favorite")
+  setFavoreteItem(props: Product) {
+    const favorite = this.getLocalStore("favorite")
 
-    if (favorites.length === 0) {
-      this.setLocalStore("favorite", [id])
+    if (favorite.length === 0) {
+      this.setLocalStore("favorite", [props])
       return
     }
 
-    let arr: string[] = favorites
+    let arr: Product[] = favorite
 
-    for (let item of favorites) {
-      if (item === id) {
-        console.log("item favoritado")
+    for (let item of favorite) {
+      if (item.id === props.id) {
+        console.log("item adicionado")
         return
       }
-    }
+    } 
 
-    arr.push(id)
+    arr.push(props)
 
     this.setLocalStore("favorite", arr)
   }
 
-  getFavoriteList(): string[] {
+  getFavoriteList(): Product[] {
     return this.getLocalStore("favorite")
   }
 

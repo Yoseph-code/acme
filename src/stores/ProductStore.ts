@@ -85,4 +85,34 @@ export class ProductStore {
 
     return res
   }
+
+  deleteProduct(item: Product) {
+    const products = this.getLocalStore("products")
+
+    const arr: Product[] = []
+
+    for (let i = 0; i < products.length; i++) {
+      if (products[i].id === item.id) {
+        delete products[i]
+      } else {
+        arr.push(products[i])
+      }
+    }
+
+    this.setLocalStore("products", arr)
+  }
+
+  getOneProduct(id: string) {
+    const products = this.getLocalStore("products")
+
+    let result: Product | any
+
+    for (let product of products) {
+      if (product.id === id) {
+        result = product
+      }
+    }
+
+    return result
+  }
 }

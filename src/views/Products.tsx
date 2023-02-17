@@ -3,12 +3,15 @@ import { useEffect, useState } from "react"
 import useStores from "../hooks/useStores"
 import { AiFillHeart, AiOutlineShoppingCart } from "react-icons/ai"
 import { Product } from "../stores/ProductStore"
+import { HiPencil } from "react-icons/hi"
+import { useNavigate } from "react-router-dom"
 
 const Products = observer(() => {
   const { productStore, cartStore, favoriteStore } = useStores()
-  const [products, setProducts] = useState([])
-  const [favorites, setFavorites] = useState([])
+  const [products, setProducts] = useState<Product[]>([])
+  const [favorites, setFavorites] = useState<Product[]>([])
   const [filter, setFilter] = useState("")
+  const navigate = useNavigate()
 
   useEffect(() => {
     getProducts()
@@ -27,6 +30,19 @@ const Products = observer(() => {
     setFavorites(fav as any)
   }
 
+  const setFavorite = async (props: Product) => {
+    productStore.deleteProduct(props)
+    await getProducts()
+    favoriteStore.setFavoreteItem(props)
+    getFavorites()
+  }
+
+  const setCart = async (props: Product) => {
+    cartStore.addToCart(props)
+    productStore.deleteProduct(props)
+    await getProducts()
+  }
+
   return (
     <>
       <div className="flex justify-between py-5">
@@ -36,17 +52,15 @@ const Products = observer(() => {
           className="p-2 border border-black"
         />
       </div>
-      <h1>Favoritos</h1>
+      {favorites.length > 0 ? (
+        <h1>Favoritos</h1>
+      ) : null}
       <div className="grid grid-cols-4 gap-4">
-        {Array.isArray(favorites) && products.filter((e: Product) => {
-          if (favorites.length === 0) {
-            return []
-          }
-
-          for (let item of favorites) {
-            if (item === e.id) {
-              return e
-            }
+        {Array.isArray(favorites) && favorites.filter((e: Product) => {
+          if (filter === "") {
+            return e
+          } else if (e.name.toLocaleLowerCase().includes(filter.toLocaleLowerCase())) {
+            return e
           }
         }).map((item: Product) => (
           <div key={item.id} className="bg-gray-700 rounded-md py-2 items-center flex flex-col text-white">
@@ -65,15 +79,12 @@ const Products = observer(() => {
               </p>
               <div className="gap-5 flex">
                 <button
-                  onClick={() => {
-                    favoriteStore.setFavoreteItem(item.id)
-                    getFavorites()
-                  }}
+                  onClick={() => setFavorite(item)}
                 >
                   <AiFillHeart />
                 </button>
                 <button
-                  onClick={() => cartStore.addToCart(item)}
+                  onClick={() => setCart(item)}
                 >
                   <AiOutlineShoppingCart />
                 </button>
@@ -110,14 +121,18 @@ const Products = observer(() => {
                 <div className="gap-5 flex">
                   <button
                     onClick={() => {
-                      favoriteStore.setFavoreteItem(item.id)
-                      getFavorites()
+                      navigate(`/product/${item.id}`)
                     }}
+                  >
+                    <HiPencil />
+                  </button>
+                  <button
+                    onClick={() => setFavorite(item)}
                   >
                     <AiFillHeart />
                   </button>
                   <button
-                    onClick={() => cartStore.addToCart(item)}
+                    onClick={() => setCart(item)}
                   >
                     <AiOutlineShoppingCart />
                   </button>
